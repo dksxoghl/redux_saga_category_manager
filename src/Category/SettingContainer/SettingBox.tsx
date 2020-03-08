@@ -4,6 +4,8 @@ import { CBox } from './styles';
 import { ParentAddSpan, SaveSpan } from './styles';
 import { MoveDown } from './MoveDown';
 import NewOrder from './NewOrder';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../modules';
 
 function SettingBox({ categories, onSave, changeRight, active, handleName }) {
     console.log(categories)
@@ -15,7 +17,9 @@ function SettingBox({ categories, onSave, changeRight, active, handleName }) {
         category: categories
     });
     const [current, setCurrent] = useState("");
-
+    
+    const {data}=useSelector((state:RootState)=>state.category_reducer.category);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         if (handleName.id === undefined) { return; }

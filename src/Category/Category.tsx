@@ -13,7 +13,7 @@ import SettingBox from './SettingContainer/SettingBox';
 import SettingRightBox from './SettingRightContainer/SettingRightBox';
 import { useSelector, useDispatch } from 'react-redux';
 import {RootState} from '../modules'
-import {  get_category } from '../modules/category';
+import {  get_category, ADD_CATEGORY } from '../modules/category';
 
 interface IProps {
   submenu: string;
@@ -49,6 +49,7 @@ const Category = () => {
      return changedList.filter(item=>item.id===id);
     })
     console.log(insertList);
+    insertList.map(list =>  dispatch({type:ADD_CATEGORY,payload:{ id: list[0].id, name: list[0].name, parent_id: list[0].parent_id, order: list[0].order, status: list[0].status,active:list[0].active }})  );
     // insertList.map(list => insert({ variables: { id: list[0].id, name: list[0].name, parent_id: list[0].parent_id, order: list[0].order, status: list[0].status,active:list[0].active } }))
     // deleteId.map(id => erase({ variables: { id: id } }));
     // // if (deleteId.length === 1 && changedList.length === categories.length) {

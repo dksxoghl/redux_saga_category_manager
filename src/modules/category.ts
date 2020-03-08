@@ -6,11 +6,15 @@ const CHANGESHOW = 'CHANGESHOW'
 export const GET_CATEGORY = 'GET_CATEGORY';
 export const GET_CATEGORY_SUCCESS = 'GET_CATEGORY_SUCCESS';
 export const GET_CATEGORY_ERROR = 'GET_CATEGORY_ERROR';
+export const ADD_CATEGORY='ADD_CATEGORY';
+export const ADD_REDNER_CATEGORY='ADD_REDNER_CATEGORY';
 
 export const get_category = () => ({
     type: GET_CATEGORY
 })
-
+export const add_category=()=>({
+    type:ADD_CATEGORY
+})
 
 export const set_true = (category) => ({
     type: SETTRUE, category
@@ -29,7 +33,7 @@ const initialState =
 {
     category: {
         loading: false,
-        data: null,
+        data: [],
         error: null,
     }
 }
@@ -47,7 +51,6 @@ export default function category_reducer(state = initialState, action) {
                 }
             }
         case GET_CATEGORY_SUCCESS:
-            // state = [];
             return {
                 ...state, category: {
                     loading: false,
@@ -56,12 +59,18 @@ export default function category_reducer(state = initialState, action) {
                 }
             }
         case GET_CATEGORY_ERROR:
-            // state = [];
             return {
                 ...state, category: {
                     loading: false,
                     data: action.payload,
                     error: action.error,
+                }
+            }
+        case ADD_REDNER_CATEGORY:
+            return {
+                ...state, category: {
+                   ...state.category,
+                    data: state.category.data.concat(action.payload),
                 }
             }
         // return (state||state.category.data.concat(action.list));
