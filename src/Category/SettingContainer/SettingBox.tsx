@@ -20,7 +20,7 @@ function SettingBox({ categories, onSave, changeRight, active, handleName }) {
     
     const {data}=useSelector((state:RootState)=>state.category_reducer.category);
     const dispatch = useDispatch();
-
+    console.log(subMenu.category,'셋팅박스로컬~~~');
     useEffect(() => {
         if (handleName.id === undefined) { return; }
         let parentList = subMenu.category.filter(list => list.parent_id === handleName.parent_id);

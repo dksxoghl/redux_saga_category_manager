@@ -12,9 +12,7 @@ function FirstItem({ item,imgStatus,subMenu,...args}) {
   // const [input, setInput] = useState(false);
   // const [value, setValue] = useState('');
   const {current,setCurrent,onAdd,onRemove,onHide,orderChange,addSub,changeRight}={...args} as any;
-  console.log(current,subMenu,args)
   const [clicked,setClicked] = useState(imgStatus==='+'? true:false);             // 이미지 결정 state
-  console.log(current);
   const handleClick = () => {
     setClicked(false);
     onAdd(item.id);

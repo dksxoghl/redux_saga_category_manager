@@ -13,7 +13,7 @@ import SettingBox from './SettingContainer/SettingBox';
 import SettingRightBox from './SettingRightContainer/SettingRightBox';
 import { useSelector, useDispatch } from 'react-redux';
 import {RootState} from '../modules'
-import {  get_category, ADD_CATEGORY } from '../modules/category';
+import {  get_category, ADD_CATEGORY, add_category } from '../modules/category';
 
 interface IProps {
   submenu: string;
@@ -46,24 +46,20 @@ const Category = () => {
     let newInsertId=insertId.slice(1,insertId.length);
     console.log(newInsertId);
     let insertList=newInsertId.map(id=>{
-     return changedList.filter(item=>item.id===id);
+      return changedList.filter(item=>item.id===id);
     })
     console.log(insertList);
-    insertList.map(list =>  dispatch({type:ADD_CATEGORY,payload:{ id: list[0].id, name: list[0].name, parent_id: list[0].parent_id, order: list[0].order, status: list[0].status,active:list[0].active }})  );
+    // insertList.map(list =>  dispatch({type:ADD_CATEGORY,payload:{ id: list[0].id, name: list[0].name, parent_id: list[0].parent_id, order: list[0].order, status: list[0].status,active:list[0].active }})  );
+    insertList.map(list=>dispatch(add_category({ id: list[0].id, name: list[0].name, parent_id: list[0].parent_id, order: list[0].order, status: list[0].status,active:list[0].active } )))
+
+
     // insertList.map(list => insert({ variables: { id: list[0].id, name: list[0].name, parent_id: list[0].parent_id, order: list[0].order, status: list[0].status,active:list[0].active } }))
     // deleteId.map(id => erase({ variables: { id: id } }));
     // // if (deleteId.length === 1 && changedList.length === categories.length) {
     // changedList.map(list => {
     //   save({ variables: { id: list.id, name: list.name, parent_id: list.parent_id, order: list.order, status: list.status ,active:list.active} })
     // });
-    // } else if (changedList.length > data.categories2.length) {
-
-    // } else {
-    //   changedList.map(list => {
-    //     save({ variables: { id: list.id, name: list.name, parent_id: list.parent_id, order: list.order } })
-    //   });
-    // }
-    // id.map(id=>  save({ variables: { id: id } }));
+   
     alert('저장이 완료 되었습니다.');
   }
   

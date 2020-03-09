@@ -12,8 +12,9 @@ export const ADD_REDNER_CATEGORY='ADD_REDNER_CATEGORY';
 export const get_category = () => ({
     type: GET_CATEGORY
 })
-export const add_category=()=>({
-    type:ADD_CATEGORY
+export const add_category=(list)=>({
+    type:ADD_CATEGORY,
+    payload:list
 })
 
 export const set_true = (category) => ({
