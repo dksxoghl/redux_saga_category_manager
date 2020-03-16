@@ -1,26 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import FirstMenu from './FirstMenu';
-import { CBox } from './styles';
-import { ParentAddSpan, SaveSpan } from './styles';
-import { MoveDown } from './MoveDown';
-import NewOrder from './NewOrder';
+import FirstMenu from '../components/Menu';
+import { ParentAddSpan, SaveSpan,CBox } from './styles';
+import { MoveDown } from '../components/MoveDown';
+import NewOrder from '../components/NewOrder';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../modules';
+import { add_category, add_subCategory, delete_category, update_category } from '../../modules/category';
 
 function SettingBox({ categories, onSave, changeRight, active, handleName }) {
     console.log(categories)
-    // const [selectID, setSelectID] = useState("");
+    const { data } = useSelector((state: RootState) => state.category_reducer.category);
+    const dispatch = useDispatch();
     const [deleteId, setDeleteId] = useState([""]);
     const [insertId, setInsertId] = useState([""]);
     const [subMenu, setSubMenu] = useState({
         // category: parentList
-        category: categories
+        category: data
     });
     const [current, setCurrent] = useState("");
+
     
-    const {data}=useSelector((state:RootState)=>state.category_reducer.category);
-    const dispatch = useDispatch();
-    console.log(subMenu.category,'셋팅박스로컬~~~');
+    console.log(subMenu.category, '셋팅박스로컬~~~');
+
+    // useEffect(() => {
+    //     console.log(categories, '바뀐다~~~')
+    //     setSubMenu({ category: categories });
+    // }, [categories]);
+    useEffect(()=>{
+        setSubMenu({category:data});
+    },[data]);
+    
     useEffect(() => {
         if (handleName.id === undefined) { return; }
         let parentList = subMenu.category.filter(list => list.parent_id === handleName.parent_id);
@@ -42,20 +51,20 @@ function SettingBox({ categories, onSave, changeRight, active, handleName }) {
     }, [handleName]);
     useEffect(() => {
         if (active.id === undefined) return;
-        let aId= active.id+':';
+        let aId = active.id + ':';
         setSubMenu({
             category: subMenu.category.map(list => {
                 if (active.id.length === 0) return list;
-                if (list.id.slice(0, active.id.length+1) === aId) {                       
+                if (list.id.slice(0, active.id.length + 1) === aId) {
                     return ({ ...list, active: active.active });
                 }
-                if (list.id === active.id) {                         
+                if (list.id === active.id) {
                     return ({ ...list, active: active.active });
                 }
                 return list;
             })
         })
-      
+
         console.log('활성화변경');
     }, [active]);
 
@@ -182,16 +191,18 @@ function SettingBox({ categories, onSave, changeRight, active, handleName }) {
             let childDelete = subMenu.category;
             childDelete = childDelete.filter(i => i.id.slice(0, id.length + 1) !== dId);       //선택된아이디랑 현재 상태에있는 목록아디 및 하위목록들 비교  
             childDelete = childDelete.filter(i => i.id !== id);
-            setSubMenu({ category: NewOrder(childDelete) });                                     //order재정렬
-            // subMenu.category.map((item) => {
-            //     if (id === item.id.slice(0, id.length)) { //선택된아이디랑 현재 상태에있는 목록아디 및 하위목록들 비교
-            //         console.log(item.id.slice(0, id.length))
-            //         let childDelete = subMenu.category.filter(i => i.id.slice(0, id.length) !== id);
-            //         setSubMenu({ category: NewOrder(childDelete) });                                     //order재정렬
-            //     }
-            // })
-            setDeleteId(deleteId.concat(id));
-            setInsertId(insertId.filter(insertId => insertId.slice(0, id.length) !== id))
+
+            dispatch(delete_category(id,childDelete));
+            // dispatch(update_category(subMenu.category));
+            
+            // setSubMenu({ category: NewOrder(childDelete) });                                     //order재정렬
+           
+            // let b=false;            //삭제후 추가하고 같은거 삭제했을시
+            // deleteId.map((d)=>{
+            //     if(d===id) b=true;
+            // });
+            // if(!b) setDeleteId(deleteId.concat(id));
+            // setInsertId(insertId.filter(insertId => insertId.slice(0, id.length) !== id));
         } else {
         }
     }
@@ -237,11 +248,12 @@ function SettingBox({ categories, onSave, changeRight, active, handleName }) {
         //         else {return {...item, order: (item.order+1)};}
         //     })
         // });
-        setSubMenu({ category: [...addArr.slice(0, num), parent, ...addArr.slice(num, subMenu.category.length)] }); //객체를 배열 원하는위치안에 삽입
-        setInsertId(insertId.concat(newId));
+        dispatch(add_subCategory({parent,addArr,num}))
+        // setSubMenu({ category: [...addArr.slice(0, num), parent, ...addArr.slice(num, subMenu.category.length)] }); //객체를 배열 원하는위치안에 삽입
+        // setInsertId(insertId.concat(newId));
 
     }
-  
+
     const handleClick = () => {             //저장이벤트, 카테고리와 눌럿던 삭제,추가버튼아이디들 담아서보냄
         onSave(subMenu.category, deleteId, insertId);
         setDeleteId([""]);
@@ -271,12 +283,14 @@ function SettingBox({ categories, onSave, changeRight, active, handleName }) {
             __typename: "categories2"
 
         }
-        setSubMenu({ category: subMenu.category.concat(parent) });
-        setInsertId(insertId.concat(id));
+        // setSubMenu({ category: subMenu.category.concat(parent) });
+        // setInsertId(insertId.concat(id));
+        dispatch(add_category({parent}))
 
     }
+   
 
-    let menu = <FirstMenu  subMenu={subMenu.category} onAdd={onAdd} onRemove={onRemove} onHide={onHide} orderChange={orderChange}
+    let menu = <FirstMenu subMenu={subMenu.category} onAdd={onAdd} onRemove={onRemove} onHide={onHide} orderChange={orderChange}
         addSub={addSub} changeRight={changeRight} current={current} setCurrent={setCurrent}
     />;
     return (

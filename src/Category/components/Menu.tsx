@@ -1,5 +1,5 @@
 import React from 'react';
-import FirstItem from './FirstItem';
+import FirstItem from './Item';
 import { Line } from './styles';
 
 function FirstMenu({ subMenu, ...args }) {

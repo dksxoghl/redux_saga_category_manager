@@ -1,3 +1,4 @@
+import NewOrder from "../Category/components/NewOrder";
 
 const GETLIST = 'GETLIST'
 const SETTRUE = 'SETTRUE'
@@ -6,16 +7,37 @@ const CHANGESHOW = 'CHANGESHOW'
 export const GET_CATEGORY = 'GET_CATEGORY';
 export const GET_CATEGORY_SUCCESS = 'GET_CATEGORY_SUCCESS';
 export const GET_CATEGORY_ERROR = 'GET_CATEGORY_ERROR';
-export const ADD_CATEGORY='ADD_CATEGORY';
-export const ADD_REDNER_CATEGORY='ADD_REDNER_CATEGORY';
+export const ADD_CATEGORY = 'ADD_CATEGORY';
+export const ADD_REDNER_CATEGORY = 'ADD_REDNER_CATEGORY';
+export const UPDATE_CATEGORY = 'UPDATE_CATEGORY';
+export const UPDATE_REDNER_CATEGORY = 'UPDATE_REDNER_CATEGORY';
+export const DELETE_CATEGORY = 'DELETE_CATEGORY';
+export const DELETE_REDNER_CATEGORY='DELETE_REDNER_CATEGORY';
+export const ADD_SUBCATEGORY = 'ADD_SUBCATEGORY';
+export const ADD_REDNER_SUBCATEGORY = 'ADD_REDNER_SUBCATEGORY';
 
 export const get_category = () => ({
     type: GET_CATEGORY
 })
-export const add_category=(list)=>({
-    type:ADD_CATEGORY,
-    payload:list
+export const add_category = (list) => ({
+    type: ADD_CATEGORY,
+    payload: list
 })
+export const add_subCategory = (list) => ({
+    type: ADD_SUBCATEGORY,
+    payload: list
+})
+export const update_category = (list) => ({
+    type: UPDATE_CATEGORY,
+    payload: list
+})
+export const delete_category = (id,deleteList) => ({
+    type: DELETE_CATEGORY,
+    payload: id,
+    deleteList
+})
+
+
 
 export const set_true = (category) => ({
     type: SETTRUE, category
@@ -70,13 +92,42 @@ export default function category_reducer(state = initialState, action) {
         case ADD_REDNER_CATEGORY:
             return {
                 ...state, category: {
-                   ...state.category,
-                    data: state.category.data.concat(action.payload),
+                    ...state.category,
+                    data: state.category.data.concat(action.payload.parent),
                 }
             }
-        // return (state||state.category.data.concat(action.list));
-        // case SETTRUE:
+        case ADD_REDNER_SUBCATEGORY:
+            return {
+                category: {
+                    ...state.category,
+                    data: [...action.payload.addArr.slice(0, action.payload.num), action.payload.parent, ...action.payload.addArr.slice(action.payload.num,state.category.data.length)]
+                }
+            }
+        case DELETE_REDNER_CATEGORY:
+            return {
+                category: {
+                    ...state.category,
+                    data: NewOrder(action.deleteList)
+                }
+            }
 
+        // case UPDATE_REDNER_CATEGORY:
+        //     return {
+        //          category: {
+        //             ...state.category,
+        //             data: state.category.data.map((item) => {
+        //                 if (item !== action.payload) {
+        //                     // 이는 관심없는 요소입니다 - 그대로 유지하세요
+        //                     return item;
+        //                 }
+        //                 // 그게 아니면, 우리가 원하는것입니다. - 업데이트된 값을 반환하세요
+        //                 return action.payload;
+        //             })
+        //         }
+        //     }
+
+
+        // case SETTRUE:
         //     return state.map((item, index) => {
         //         if (index + 1 !== action.category.id) {
         //             // 이는 관심없는 요소입니다 - 그대로 유지하세요

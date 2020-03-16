@@ -9,11 +9,11 @@ import {
   AdminTableBox,
 } from "./styles";
 
-import SettingBox from './SettingContainer/SettingBox';
-import SettingRightBox from './SettingRightContainer/SettingRightBox';
+import SettingBox from './SettingBox';
+import SettingRightBox from './SettingRightBox';
 import { useSelector, useDispatch } from 'react-redux';
-import {RootState} from '../modules'
-import {  get_category, ADD_CATEGORY, add_category } from '../modules/category';
+import {RootState} from '../../modules'
+import {  get_category, add_category, update_category, delete_category } from '../../modules/category';
 
 interface IProps {
   submenu: string;
@@ -44,15 +44,21 @@ const Category = () => {
   const onSave = (changedList, deleteId,insertId) => {
     console.log(changedList, deleteId,insertId);
     let newInsertId=insertId.slice(1,insertId.length);
+    let newDeleteId=deleteId.slice(1,deleteId.length);
     console.log(newInsertId);
     let insertList=newInsertId.map(id=>{
       return changedList.filter(item=>item.id===id);
     })
     console.log(insertList);
+    //r같으면 업데이트만
     // insertList.map(list =>  dispatch({type:ADD_CATEGORY,payload:{ id: list[0].id, name: list[0].name, parent_id: list[0].parent_id, order: list[0].order, status: list[0].status,active:list[0].active }})  );
-    insertList.map(list=>dispatch(add_category({ id: list[0].id, name: list[0].name, parent_id: list[0].parent_id, order: list[0].order, status: list[0].status,active:list[0].active } )))
-
-
+    
+    // insertList.map(list=>dispatch(add_category({ id: list[0].id, name: list[0].name, parent_id: list[0].parent_id, order: list[0].order, status: list[0].status,active:list[0].active } )))
+    // newDeleteId.map(id => dispatch(delete_category(id)));
+    changedList.map(list => {
+        dispatch(update_category({ id: list.id, name: list.name, parent_id: list.parent_id, order: list.order, status: list.status ,active:list.active}));
+      });
+    
     // insertList.map(list => insert({ variables: { id: list[0].id, name: list[0].name, parent_id: list[0].parent_id, order: list[0].order, status: list[0].status,active:list[0].active } }))
     // deleteId.map(id => erase({ variables: { id: id } }));
     // // if (deleteId.length === 1 && changedList.length === categories.length) {
