@@ -50,6 +50,10 @@ function* updateCategorySaga(action) {
 }
 function* deleteCategorySaga(action) {
     yield call(apiCategory.deleteList, action.payload);
+    yield all(action.deleteList.map((list) => {
+            return call(apiCategory.updateList, list);
+        }
+    ));
     yield put({
         type:DELETE_REDNER_CATEGORY,
         payload:action.payload,

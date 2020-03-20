@@ -191,7 +191,7 @@ function SettingBox({ categories, onSave, changeRight, active, handleName }) {
             let childDelete = subMenu.category;
             childDelete = childDelete.filter(i => i.id.slice(0, id.length + 1) !== dId);       //선택된아이디랑 현재 상태에있는 목록아디 및 하위목록들 비교  
             childDelete = childDelete.filter(i => i.id !== id);
-
+            childDelete= NewOrder(childDelete);
             dispatch(delete_category(id,childDelete));
             // dispatch(update_category(subMenu.category));
             
