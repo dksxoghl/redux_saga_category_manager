@@ -1,4 +1,4 @@
-import { call, put, takeEvery,all} from 'redux-saga/effects';
+import { call, put, takeEvery,all, takeLatest} from 'redux-saga/effects';
 import * as apiCategory from '../api/apiCategory';
 import { GET_CATEGORY_SUCCESS, GET_CATEGORY_ERROR, GET_CATEGORY, ADD_CATEGORY, ADD_REDNER_CATEGORY, ADD_REDNER_SUBCATEGORY, UPDATE_CATEGORY, DELETE_CATEGORY,DELETE_REDNER_CATEGORY, ADD_SUBCATEGORY } from '../modules/category';
 function* getCategorySaga() {
@@ -64,8 +64,8 @@ function* deleteCategorySaga(action) {
 
 export function* categorySaga() {
     yield takeEvery(GET_CATEGORY, getCategorySaga);
-    yield takeEvery(ADD_CATEGORY, addCategorySaga);
-    yield takeEvery(ADD_SUBCATEGORY, addSubCategorySaga);
+    yield takeLatest(ADD_CATEGORY, addCategorySaga);
+    yield takeLatest(ADD_SUBCATEGORY, addSubCategorySaga);
     yield takeEvery(UPDATE_CATEGORY, updateCategorySaga);
     yield takeEvery(DELETE_CATEGORY, deleteCategorySaga);
 }
