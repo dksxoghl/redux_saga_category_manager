@@ -1,7 +1,22 @@
 import NewOrder from "../Category/components/NewOrder";
 
-const GETLIST = 'GETLIST'
-const SETTRUE = 'SETTRUE'
+export type Data = {
+    id: string;
+    name: string;
+    parent_id: string;
+    order: number;
+    status: string;
+    active: string;
+}
+export type Category = {
+    category: {
+        loading: boolean,
+        data: Array<Data>,
+        error: any,
+    }
+}
+
+const CHANGEHIDE = 'CHANGEHIDE'
 const CHANGESHOW = 'CHANGESHOW'
 
 export const GET_CATEGORY = 'GET_CATEGORY';
@@ -12,9 +27,20 @@ export const ADD_REDNER_CATEGORY = 'ADD_REDNER_CATEGORY';
 export const UPDATE_CATEGORY = 'UPDATE_CATEGORY';
 export const UPDATE_REDNER_CATEGORY = 'UPDATE_REDNER_CATEGORY';
 export const DELETE_CATEGORY = 'DELETE_CATEGORY';
-export const DELETE_REDNER_CATEGORY='DELETE_REDNER_CATEGORY';
+export const DELETE_REDNER_CATEGORY = 'DELETE_REDNER_CATEGORY';
 export const ADD_SUBCATEGORY = 'ADD_SUBCATEGORY';
 export const ADD_REDNER_SUBCATEGORY = 'ADD_REDNER_SUBCATEGORY';
+
+export const change_show = (id) => ({
+    type: CHANGESHOW,
+    payload: id
+});
+export const change_hide = (id) => ({
+    type: CHANGEHIDE,
+    payload: id
+});
+
+
 
 export const get_category = () => ({
     type: GET_CATEGORY
@@ -31,7 +57,7 @@ export const update_category = (list) => ({
     type: UPDATE_CATEGORY,
     payload: list
 })
-export const delete_category = (id,deleteList) => ({
+export const delete_category = (id, deleteList) => ({
     type: DELETE_CATEGORY,
     payload: id,
     deleteList
@@ -39,19 +65,19 @@ export const delete_category = (id,deleteList) => ({
 
 
 
-export const set_true = (category) => ({
-    type: SETTRUE, category
-});
-export const category_list = (list) => ({
-    type: GETLIST, list
-});
-export const change_show = () => ({
-    type: CHANGESHOW
-})
+// export const set_true = (category) => ({
+//     type: SETTRUE, category
+// });
+// export const category_list = (list) => ({
+//     type: GETLIST, list
+// });
+// export const change_show = () => ({
+//     type: CHANGESHOW
+// })
 
 
 
-const initialState =
+const initialState: Category =
 // { id: 'a0', name: '대', parent_id: null, order: 1, status: 'show', active: true }
 {
     category: {
@@ -62,7 +88,8 @@ const initialState =
 }
     ;
 
-export default function category_reducer(state = initialState, action) {
+export default function category_reducer(state: Category = initialState, action) {
+    const oldList = state.category.data;
     switch (action.type) {
         case GET_CATEGORY:
             // state = [];
@@ -93,14 +120,14 @@ export default function category_reducer(state = initialState, action) {
             return {
                 ...state, category: {
                     ...state.category,
-                    data: state.category.data.concat(action.payload.parent),
+                    data: oldList.concat(action.payload.parent),
                 }
             }
         case ADD_REDNER_SUBCATEGORY:
             return {
                 category: {
                     ...state.category,
-                    data: [...action.payload.addArr.slice(0, action.payload.num), action.payload.parent, ...action.payload.addArr.slice(action.payload.num,state.category.data.length)]
+                    data: [...action.payload.addArr.slice(0, action.payload.num), action.payload.parent, ...action.payload.addArr.slice(action.payload.num, state.category.data.length)]
                 }
             }
         case DELETE_REDNER_CATEGORY:
@@ -110,7 +137,36 @@ export default function category_reducer(state = initialState, action) {
                     data: NewOrder(action.deleteList)
                 }
             }
-
+        case CHANGESHOW:
+            return {
+                category: {
+                    ...state.category,
+                    data: oldList.map(list => {
+                        if (list.parent_id === action.payload) {
+                            console.log(true);
+                            return ({ ...list, status: 'show' });
+                        }
+                        return list;
+                    })
+                }
+            }
+        case CHANGEHIDE: {
+            const id = action.payload;
+            return {
+                category: {
+                    ...state.category,
+                    data: oldList.map(list => {
+                        let pId;
+                        if (list.parent_id)
+                            pId = list.parent_id.slice(0, id.length);   //수정필요
+                        if (id === pId) {
+                            return ({ ...list, status: 'hide' });
+                        }
+                        return list;
+                    })
+                }
+            }
+        }
         // case UPDATE_REDNER_CATEGORY:
         //     return {
         //          category: {
@@ -139,8 +195,8 @@ export default function category_reducer(state = initialState, action) {
         //             show: !action.category.show
         //         };
         //     });
-        case CHANGESHOW:
-            return state;
+        // case CHANGESHOW:
+        //     return state;
 
         default:
             return state;

@@ -5,7 +5,7 @@ import { MoveDown } from '../components/MoveDown';
 import NewOrder from '../components/NewOrder';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../modules';
-import { add_category, add_subCategory, delete_category, update_category } from '../../modules/category';
+import { add_category, add_subCategory, delete_category, update_category, change_show, change_hide } from '../../modules/category';
 
 function SettingBox({ categories, onSave, changeRight, active, handleName }) {
     console.log(categories)
@@ -158,30 +158,31 @@ function SettingBox({ categories, onSave, changeRight, active, handleName }) {
     }
     const onAdd = (id) => {     //보여주기  (+)버튼
         console.log(id);
-        setSubMenu({
-            category: subMenu.category.map(list => {
-                if (list.parent_id === id) {
-                    console.log(true);
-                    return ({ ...list, status: 'show' });
-                }
-                return list;
-            })
-        })
+        dispatch(change_show(id));
+        // setSubMenu({
+        //     category: subMenu.category.map(list => {
+        //         if (list.parent_id === id) {
+        //             console.log(true);
+        //             return ({ ...list, status: 'show' });
+        //         }
+        //         return list;
+        //     })
+        // })
     }
     const onHide = (id) => {            //숨기기    (-)버튼
         console.log(id);
-        setSubMenu({
-            category: subMenu.category.map(list => {
-                let pId;
-                if (list.parent_id)
-                    pId = list.parent_id.slice(0, id.length);
-                if (id === pId) {
-                    console.log(false);
-                    return ({ ...list, status: 'hide' });
-                }
-                return list;
-            })
-        })
+        dispatch(change_hide(id));
+        // setSubMenu({
+        //     category: subMenu.category.map(list => {
+        //         let pId;
+        //         if (list.parent_id)
+        //             pId = list.parent_id.slice(0, id.length);
+        //         if (id === pId) {
+        //             return ({ ...list, status: 'hide' });
+        //         }
+        //         return list;
+        //     })
+        // })
     }
 
     const onRemove = (id) => {
