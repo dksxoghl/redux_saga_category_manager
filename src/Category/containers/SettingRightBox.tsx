@@ -6,10 +6,15 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import checkFalse from '../img/checkFalse.png';
 import checkTrue from '../img/checkTrue.png';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../modules';
+import { change_name, change_active } from '../../modules/category';
 
-function SettingRightBox({  item, changeActive, changeName, checkParentItem }) {
+function SettingRightBox({  item,  checkParentItem }) {
     const [check, setCheck] = useState(false);
     const [value, setValue] = useState('');
+    const { data } = useSelector((state: RootState) => state.category_reducer.category);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         if (item.id === undefined) {
@@ -29,13 +34,17 @@ function SettingRightBox({  item, changeActive, changeName, checkParentItem }) {
             if (!deny_char.test(value)) {
                 return alert('한글/영어/숫자 최대 10자까지 입력 가능합니다.');
             }
-            //  let parentList = subMenu.filter(list => list.parent_id === item.parent_id);
-            //  let check = false;
-            //  parentList.map(item => {
-            //    if (item.name === value) check = true;
-            //  });
-            //  if (check) return alert('같은 depth에 중복된이름이 있습니다');
-            changeName(value, item.id, item.parent_id);
+             let parentList = data.filter(list => list.parent_id === item.parent_id);
+             let check = false;
+             parentList.map(item => {
+               if (item.name === value) check = true;
+             });
+             if (check) return alert('같은 depth에 중복된이름이 있습니다');
+             dispatch(change_name(item.id,value));
+
+
+        
+            // changeName(value, item.id, item.parent_id);
         }
     }
     const handleChangeName = useCallback((e) => {
@@ -46,11 +55,16 @@ function SettingRightBox({  item, changeActive, changeName, checkParentItem }) {
     const handleChange = () => {
         if (checkParentItem === undefined) {
             setCheck(!check);
-            changeActive(!check, item.id);
+            dispatch(change_active(item.id,!check));
+            return;
         }
         else if (checkParentItem.active === false) return alert('상위 항목 먼저 활성화가 필요합니다.');
         setCheck(!check);
-        changeActive(!check, item.id);
+        if (item.id === undefined) return;
+        dispatch(change_active(item.id,!check));
+
+
+        // changeActive(!check, item.id);
     }
     return (
         <div>

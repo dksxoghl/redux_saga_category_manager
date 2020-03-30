@@ -1,95 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import FirstMenu from '../components/Menu';
-import { ParentAddSpan, SaveSpan,CBox } from './styles';
+import { ParentAddSpan, SaveSpan, CBox } from './styles';
 import { MoveDown } from '../components/MoveDown';
 import NewOrder from '../components/NewOrder';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../modules';
-import { add_category, add_subCategory, delete_category, update_category, change_show, change_hide } from '../../modules/category';
+import { add_category, add_subCategory, delete_category, update_category, change_show, change_hide, change_order } from '../../modules/category';
 
-function SettingBox({ categories, onSave, changeRight, active, handleName }) {
-    console.log(categories)
+function SettingBox({ onSave, changeRight }) {
     const { data } = useSelector((state: RootState) => state.category_reducer.category);
     const dispatch = useDispatch();
     const [deleteId, setDeleteId] = useState([""]);
     const [insertId, setInsertId] = useState([""]);
-    const [subMenu, setSubMenu] = useState({
-        // category: parentList
-        category: data
-    });
+    // const [subMenu, setSubMenu] = useState({
+    //     // category: parentList
+    //     category: data
+    // });
     const [current, setCurrent] = useState("");
 
-    
-    console.log(subMenu.category, '셋팅박스로컬~~~');
+
+    console.log(data, '셋팅박스로컬~~~');
 
     // useEffect(() => {
     //     console.log(categories, '바뀐다~~~')
     //     setSubMenu({ category: categories });
     // }, [categories]);
-    useEffect(()=>{
-        setSubMenu({category:data});
-    },[data]);
-    
-    useEffect(() => {
-        if (handleName.id === undefined) { return; }
-        let parentList = subMenu.category.filter(list => list.parent_id === handleName.parent_id);
-        let check = false;
-        parentList.map(item => {
-            if (item.name === handleName.name) check = true;
-        });
-        if (check) return alert('같은 depth에 중복된이름이 있습니다');
-        setSubMenu({
-            category: subMenu.category.map(list => {
-                if (handleName.id.length === 0) return list;
-                if (list.id === handleName.id) {
-                    return ({ ...list, name: handleName.name });
-                }
-                return list;
-            })
-        })
-        console.log('이름변경')
-    }, [handleName]);
-    useEffect(() => {
-        if (active.id === undefined) return;
-        let aId = active.id + ':';
-        setSubMenu({
-            category: subMenu.category.map(list => {
-                if (active.id.length === 0) return list;
-                if (list.id.slice(0, active.id.length + 1) === aId) {
-                    return ({ ...list, active: active.active });
-                }
-                if (list.id === active.id) {
-                    return ({ ...list, active: active.active });
-                }
-                return list;
-            })
-        })
 
-        console.log('활성화변경');
-    }, [active]);
+    // useEffect(()=>{
+    //     setSubMenu({category:data});
+    // },[data]);
 
 
-    // const updateName = (item, value) => {
-    //     console.log(item, value);
-    //     setSubMenu({
-    //         category: subMenu.category.map(list => {
-    //             if (list.id === item.id) {
-    //                 console.log(true);
-    //                 return ({ ...list, name: value })
-    //             }
-    //             return list;
-    //         })
-    //     })
-    // }
     const orderChange = (item, type) => {           //순서바꾸기
-        if ((item.order === 1 && type) || item.order === subMenu.category.length && !type) return;
-        if (type && subMenu.category[item.order - 2].id === item.parent_id) {       //위로갈때 
+        if ((item.order === 1 && type) || item.order === data.length && !type) return;
+        if (type && data[item.order - 2].id === item.parent_id) {       //위로갈때 
             return alert('같은 그룹 내에서만 이동이 가능합니다.');
         }
 
         if (!type) { //아래로갈때
             let x, y;
-            x = subMenu.category[item.order].id.split(':');
+            x = data[item.order].id.split(':');
             y = item.id.split(':');
             if (x.length < y.length)
                 return alert('같은 그룹 내에서만 이동이 가능합니다.');
@@ -97,7 +47,7 @@ function SettingBox({ categories, onSave, changeRight, active, handleName }) {
         // if (!type && subMenu.category[item.order].id.length < item.id.length) { //아래로갈때
         //     return alert('같은 그룹끼리만 이동가능');
         // }
-        let child = subMenu.category.filter(list => {
+        let child = data.filter(list => {
             let len = item.id.length;
             if (list.id === item.id) return list;
             if (list.id.slice(0, len + 1) === (item.id + ':')) return list;
@@ -106,7 +56,7 @@ function SettingBox({ categories, onSave, changeRight, active, handleName }) {
         let below;
 
         if (!type) {                                        // 아래로갈때 다른 대 중분류일시 수정불가
-            below = subMenu.category.slice((item.order - 1) + child.length, (item.order - 1) + child.length + 1);
+            below = data.slice((item.order - 1) + child.length, (item.order - 1) + child.length + 1);
             console.log(below);
             if (below.length < 1) return;
             let x, y;
@@ -118,7 +68,7 @@ function SettingBox({ categories, onSave, changeRight, active, handleName }) {
             //     return alert('같은 그룹d끼리만 이동가능');
             // }
         } else {
-            let parentList = subMenu.category.filter(list => list.parent_id === item.parent_id);
+            let parentList = data.filter(list => list.parent_id === item.parent_id);
             console.log(parentList, item);
             let findIndex = parentList.indexOf(item);
             console.log(findIndex);
@@ -138,7 +88,7 @@ function SettingBox({ categories, onSave, changeRight, active, handleName }) {
         }
         let c = below[0].id.split(":");
         console.log(c);
-        let behind = subMenu.category.filter(list => {              //자신포함하위항목들 아이디로 찾기
+        let behind = data.filter(list => {              //자신포함하위항목들 아이디로 찾기
             let findArray = list.id.split(":");
             let findId = '';
             for (let index = 0; index < c.length; index++) {
@@ -154,50 +104,33 @@ function SettingBox({ categories, onSave, changeRight, active, handleName }) {
             // if (list.id.slice(0, len) === below[0].id) return list;
         });
         console.log(child, 'child', behind);
-        setSubMenu({ category: MoveDown(subMenu.category, item, type, child, behind) })
+        // const category = MoveDown(subMenu.category, item, type, child, behind);
+        dispatch(change_order(MoveDown(data, item, type, child, behind)));
+        // setSubMenu({ category: MoveDown(subMenu.category, item, type, child, behind) })
     }
     const onAdd = (id) => {     //보여주기  (+)버튼
         console.log(id);
         dispatch(change_show(id));
-        // setSubMenu({
-        //     category: subMenu.category.map(list => {
-        //         if (list.parent_id === id) {
-        //             console.log(true);
-        //             return ({ ...list, status: 'show' });
-        //         }
-        //         return list;
-        //     })
-        // })
     }
     const onHide = (id) => {            //숨기기    (-)버튼
         console.log(id);
         dispatch(change_hide(id));
-        // setSubMenu({
-        //     category: subMenu.category.map(list => {
-        //         let pId;
-        //         if (list.parent_id)
-        //             pId = list.parent_id.slice(0, id.length);
-        //         if (id === pId) {
-        //             return ({ ...list, status: 'hide' });
-        //         }
-        //         return list;
-        //     })
-        // })
+
     }
 
     const onRemove = (id) => {
         console.log(id);
         if (window.confirm('하위목록 다삭제됨')) {
             let dId = id + ':';
-            let childDelete = subMenu.category;
+            let childDelete = data;
             childDelete = childDelete.filter(i => i.id.slice(0, id.length + 1) !== dId);       //선택된아이디랑 현재 상태에있는 목록아디 및 하위목록들 비교  
             childDelete = childDelete.filter(i => i.id !== id);
-            childDelete= NewOrder(childDelete);
-            dispatch(delete_category(id,childDelete));
+            childDelete = NewOrder(childDelete);
+            dispatch(delete_category(id, childDelete));
             // dispatch(update_category(subMenu.category));
-            
+
             // setSubMenu({ category: NewOrder(childDelete) });                                     //order재정렬
-           
+
             // let b=false;            //삭제후 추가하고 같은거 삭제했을시
             // deleteId.map((d)=>{
             //     if(d===id) b=true;
@@ -208,7 +141,7 @@ function SettingBox({ categories, onSave, changeRight, active, handleName }) {
         }
     }
     const addSub = (id) => {                //하위목록추가,
-        let parentList = subMenu.category.filter(list => list.parent_id === id);  //하위항목들구하고
+        let parentList = data.filter(list => list.parent_id === id);  //하위항목들구하고
         let newId = '';
         if (parentList.length > 0) {
             let arr = parentList[parentList.length - 1].id.split(':');                  //:하위항목 마지막꺼 구분자로 자르고
@@ -218,11 +151,11 @@ function SettingBox({ categories, onSave, changeRight, active, handleName }) {
                 newId += arr[index] + ':';
             }
             newId += endId;
-            parentList = parentList.concat(subMenu.category.filter(list => list.parent_id === parentList[parentList.length - 1].id));   //하위목록 추가시 제일아래목록에 추가 child있을시 고려.
+            parentList = parentList.concat(data.filter(list => list.parent_id === parentList[parentList.length - 1].id));   //하위목록 추가시 제일아래목록에 추가 child있을시 고려.
         }
         else {
             newId = id + ':a0';
-            parentList = subMenu.category.filter(list => list.id === id);
+            parentList = data.filter(list => list.id === id);
         }
         console.log(parentList);
         let name =
@@ -233,12 +166,12 @@ function SettingBox({ categories, onSave, changeRight, active, handleName }) {
             parent_id: id,
             status: "show",
             order: parentList[parentList.length - 1].order + 1,
-            active: subMenu.category[parentList[parentList.length - 1].order - 1].active,               //바로 위항목의 활성화상태로 생성
+            active: data[parentList[parentList.length - 1].order - 1].active,               //바로 위항목의 활성화상태로 생성
             __typename: "categories2"
 
         }
         let num = parentList[parentList.length - 1].order;
-        let addArr = subMenu.category.map(item => {                 //집어넣는 위치 이후에있는 순서값들 1씩증가
+        let addArr = data.map(item => {                 //집어넣는 위치 이후에있는 순서값들 1씩증가
             if (item.order < parent.order) { return item; }
             else { return { ...item, order: (item.order + 1) }; }
         });
@@ -249,22 +182,22 @@ function SettingBox({ categories, onSave, changeRight, active, handleName }) {
         //         else {return {...item, order: (item.order+1)};}
         //     })
         // });
-        dispatch(add_subCategory({parent,addArr,num}))
+        dispatch(add_subCategory({ parent, addArr, num }))
         // setSubMenu({ category: [...addArr.slice(0, num), parent, ...addArr.slice(num, subMenu.category.length)] }); //객체를 배열 원하는위치안에 삽입
         // setInsertId(insertId.concat(newId));
 
     }
 
     const handleClick = () => {             //저장이벤트, 카테고리와 눌럿던 삭제,추가버튼아이디들 담아서보냄
-        onSave(subMenu.category, deleteId, insertId);
-        setDeleteId([""]);
-        setInsertId([""]);
+        onSave(data);
+        // setDeleteId([""]);
+        // setInsertId([""]);
     }
     const addParent = () => {               //대분류 추가
         // const parentList = subMenu.category.filter(list => list.parent_id === null);
         // let a = parentList[parentList.length - 1].id.split('a');
         // let id = 'a' + (parseInt(a[1]) + 1);
-        const parentList = subMenu.category.filter(list => list.parent_id === null);
+        const parentList = data.filter(list => list.parent_id === null);
         console.log(parentList)
         let big = 0;
         parentList.map((item) => {
@@ -279,30 +212,23 @@ function SettingBox({ categories, onSave, changeRight, active, handleName }) {
             name: "대_",
             parent_id: null,
             status: "show",
-            order: subMenu.category.length + 1,
+            order: data.length + 1,
             active: true,
             __typename: "categories2"
 
         }
         // setSubMenu({ category: subMenu.category.concat(parent) });
         // setInsertId(insertId.concat(id));
-        dispatch(add_category({parent}))
+        dispatch(add_category({ parent }))
 
     }
-   
 
-    let menu = <FirstMenu subMenu={subMenu.category} onAdd={onAdd} onRemove={onRemove} onHide={onHide} orderChange={orderChange}
-        addSub={addSub} changeRight={changeRight} current={current} setCurrent={setCurrent}
-    />;
     return (
         <div>
             <CBox>
-
-                {/* <FirstMenu parentList={m.nodes} onAdd={onAdd} /> */}
-                {/* {menu&&menu} */}
-                {/* {m} */}
-                {menu}
-                {/* {addChild} */}
+                <FirstMenu categories={data} onAdd={onAdd} onRemove={onRemove} onHide={onHide} orderChange={orderChange}
+                    addSub={addSub} changeRight={changeRight} current={current} setCurrent={setCurrent}
+                />;
             </CBox>
 
             <ParentAddSpan>

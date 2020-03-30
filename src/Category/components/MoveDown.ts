@@ -4,7 +4,6 @@ export const MoveDown = (contents, value, type,child,behind) => {
     console.log(contents,'순서~~~~~~~~~~~',value,type,child.length,behind.length)
     const index = contents.indexOf(value);
     let newPos = type? index - behind.length : index + behind.length
-    // contents.filter(list => list.parent_id === item.id);
     // if (index === -1) 
     //      throw new Error("Element not found in  content");
     

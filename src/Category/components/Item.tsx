@@ -7,7 +7,7 @@ import triangle from '../img/triangle.png';
 import downTriangle from '../img/triangle-copy.png';
 
 
-function FirstItem({ item,imgStatus,subMenu,...args}) {
+function FirstItem({ item,imgStatus,categories,...args}) {
   
   // const [input, setInput] = useState(false);
   // const [value, setValue] = useState('');
@@ -30,36 +30,14 @@ function FirstItem({ item,imgStatus,subMenu,...args}) {
   const handleDown = () => {
     orderChange(item, false);
   }
-  // const handleUpdate = () => {
-  //   setInput(true);
-  // }
-  // const deny_char = /^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|\*]{1,10}$/;
-  // const appKeyPress = (e) => {
-  //   if (e.key === 'Enter') {
-  //     if (value === "") return alert('1자이상 입력하시오');
-  //     if (!deny_char.test(value)) {
-  //       return alert('10자 내, 또는 영문자와 한글,숫자만을 입력하세요');
-  //     }
-  //     let parentList = subMenu.filter(list => list.parent_id === item.parent_id);
-  //     let check = false;
-  //     parentList.map(item => {
-  //       if (item.name === value) check = true;
-  //     });
-  //     if (check) return alert('같은 depth에 중복된이름이 있습니다');
-  //     setInput(false);
-  //     updateName(item, value);
-  //   }
-  // }
-  // const handleChange = useCallback((e) => {
-  //   setValue(e.target.value);
-  // }, [appKeyPress]);
+ 
 
   const handleAddSub = () => {
     addSub(item.id);
   }
   const boxClick=()=>{
     setCurrent(item.id);
-    changeRight(item,subMenu.find(list=>list.id===item.parent_id));         //해당 클릭아이템의 부모아이템찾기(부모활성화 여부 판단)
+    changeRight(item,categories.find(list=>list.id===item.parent_id));         //해당 클릭아이템의 부모아이템찾기(부모활성화 여부 판단)
   }
   let minus = '';
   //  item.id.length > 6? '----' : 

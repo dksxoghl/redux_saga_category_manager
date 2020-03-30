@@ -18,6 +18,9 @@ export type Category = {
 
 const CHANGEHIDE = 'CHANGEHIDE'
 const CHANGESHOW = 'CHANGESHOW'
+const CHANGENAME= 'CHANGENAME';
+const CHANGEACTIVE= 'CHANGEACTIVE';
+const CHANGEORDER= 'CHANGEORDER';
 
 export const GET_CATEGORY = 'GET_CATEGORY';
 export const GET_CATEGORY_SUCCESS = 'GET_CATEGORY_SUCCESS';
@@ -39,9 +42,18 @@ export const change_hide = (id) => ({
     type: CHANGEHIDE,
     payload: id
 });
-
-
-
+export const change_name=(id,name)=>({
+    type: CHANGENAME,
+    payload: {id,name}
+});
+export const change_active=(id,active)=>({
+    type: CHANGEACTIVE,
+    payload: {id,active}
+});
+export const change_order=(list)=>({
+    type: CHANGEORDER,
+    payload: list
+});
 export const get_category = () => ({
     type: GET_CATEGORY
 })
@@ -62,18 +74,6 @@ export const delete_category = (id, deleteList) => ({
     payload: id,
     deleteList
 })
-
-
-
-// export const set_true = (category) => ({
-//     type: SETTRUE, category
-// });
-// export const category_list = (list) => ({
-//     type: GETLIST, list
-// });
-// export const change_show = () => ({
-//     type: CHANGESHOW
-// })
 
 
 
@@ -167,36 +167,48 @@ export default function category_reducer(state: Category = initialState, action)
                 }
             }
         }
-        // case UPDATE_REDNER_CATEGORY:
-        //     return {
-        //          category: {
-        //             ...state.category,
-        //             data: state.category.data.map((item) => {
-        //                 if (item !== action.payload) {
-        //                     // 이는 관심없는 요소입니다 - 그대로 유지하세요
-        //                     return item;
-        //                 }
-        //                 // 그게 아니면, 우리가 원하는것입니다. - 업데이트된 값을 반환하세요
-        //                 return action.payload;
-        //             })
-        //         }
-        //     }
-
-
-        // case SETTRUE:
-        //     return state.map((item, index) => {
-        //         if (index + 1 !== action.category.id) {
-        //             // 이는 관심없는 요소입니다 - 그대로 유지하세요
-        //             return item;
-        //         }
-        //         // 그게 아니면, 우리가 원하는것입니다. - 업데이트된 값을 반환하세요
-        //         return {
-        //             ...item,
-        //             show: !action.category.show
-        //         };
-        //     });
-        // case CHANGESHOW:
-        //     return state;
+        case CHANGENAME : {
+            if(!action.payload) return state;
+            return {
+                category:{
+                    ...state.category,
+                    data: oldList.map(list => {
+                                if (list.id === action.payload.id) {
+                                    return ({ ...list, name: action.payload.name });
+                                }
+                                return list;
+                            })
+                }
+            }
+        }
+        case CHANGEACTIVE : {
+            console.log(action.payload);
+            const id = action.payload.id;
+            const aId = action.payload.id + ':';
+            return {
+                category:{
+                    ...state.category,
+                    data: oldList.map(list => {
+                                if (id.length === 0) return list;
+                                if (list.id.slice(0, id.length + 1) === aId) {
+                                    return ({ ...list, active:  action.payload.active });
+                                }
+                                if (list.id === id) {
+                                    return ({ ...list, active: action.payload.active });
+                                }
+                                return list;
+                            })
+                }
+            }
+        }
+        case CHANGEORDER : {
+            return {
+                category:{
+                    ...state.category,
+                    data: action.payload
+                }
+            }
+        }
 
         default:
             return state;
